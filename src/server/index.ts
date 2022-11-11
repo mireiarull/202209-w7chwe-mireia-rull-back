@@ -1,5 +1,5 @@
 import type { Express } from "express";
-import app from "./app";
+import app from "./app.js";
 
 app.disable("x-powered-by");
 

@@ -10,7 +10,7 @@ import connectDatabase from "./database/index.js";
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const { MongoServerError } = mongo;
 
-const debug = debugCreator("items: server: root");
+const debug = debugCreator("social: server: root");
 
 try {
   await startServer(app, Number(environment.port));
