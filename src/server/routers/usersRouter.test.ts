@@ -1,7 +1,7 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import request from "supertest";
-import type { Credentials } from "../contollers/types";
+import type { RegisterCredentials } from "../controllers/types";
 import User from "../../database/models/User";
 import connectDatabase from "../../database";
 import app from "../app";
@@ -26,7 +26,7 @@ describe("Given a POST method with /users/register endpoint", () => {
   describe("When it receives a request with username 'mireia' and password '123456' and email 'mireia@gmail.com'", () => {
     test("Then it should respond with a 201 status and a user mireia and id", async () => {
       const expectedStatus = 201;
-      const registerData: Credentials = {
+      const registerData: RegisterCredentials = {
         username: "mireia",
         password: "123456",
         email: "mireia@gmail.com",
