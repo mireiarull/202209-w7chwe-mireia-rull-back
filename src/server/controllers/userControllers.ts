@@ -5,12 +5,9 @@ import type { Error } from "mongoose";
 import jwt from "jsonwebtoken";
 import CustomError from "../../CustomError/CustomError.js";
 import User from "../../database/models/User.js";
-import type {
-  Credentials,
-  RegisterCredentials,
-  UserTokenPayload,
-} from "./types.js";
+import type { Credentials, RegisterCredentials } from "./types.js";
 import environment from "../../loadEnvironment.js";
+import type { CustomRequest, UserTokenPayload } from "../../types.js";
 
 export const registerUser = async (
   req: Request,
@@ -100,14 +97,15 @@ export const loginUser = async (
 };
 
 export const getAllUsers = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ) => {
-  // Const { userId } = req;
-
+  const { userId } = req;
   try {
-    const users = await User.find();
+    const users = await User.find({
+      _id: { $ne: userId },
+    });
     res.status(200).json({ users });
   } catch (error: unknown) {
     const customError = new CustomError(

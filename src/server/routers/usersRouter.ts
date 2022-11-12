@@ -5,6 +5,7 @@ import {
   loginUser,
   registerUser,
 } from "../controllers/userControllers.js";
+import auth from "../middlewares/auth.js";
 import {
   userLoginSchema,
   userRegisterSchema,
@@ -24,6 +25,6 @@ userRouter.post(
   loginUser
 );
 
-userRouter.get("/list", getAllUsers);
+userRouter.get("/list", auth, getAllUsers);
 
 export default userRouter;
