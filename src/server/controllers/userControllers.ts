@@ -5,7 +5,11 @@ import type { Error } from "mongoose";
 import jwt from "jsonwebtoken";
 import CustomError from "../../CustomError/CustomError.js";
 import User from "../../database/models/User.js";
-import type { Credentials, UserTokenPayload } from "./types.js";
+import type {
+  Credentials,
+  RegisterCredentials,
+  UserTokenPayload,
+} from "./types.js";
 import environment from "../../loadEnvironment.js";
 
 export const registerUser = async (
@@ -13,7 +17,7 @@ export const registerUser = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { username, password, email } = req.body as Credentials;
+  const { username, password, email } = req.body as RegisterCredentials;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
