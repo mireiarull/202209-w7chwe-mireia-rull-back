@@ -14,6 +14,12 @@ const userSchema = new Schema({
     required: true,
     type: String,
   },
+  name: {
+    type: String,
+  },
+  job: {
+    type: String,
+  },
 });
 
 // eslint-disable-next-line @typescript-eslint/naming-convention

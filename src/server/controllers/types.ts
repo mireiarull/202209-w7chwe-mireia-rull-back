@@ -12,4 +12,14 @@ export interface UserTokenPayload extends JwtPayload {
 
 export interface RegisterCredentials extends Credentials {
   email: string;
+  name: string;
+  job: string;
+}
+
+export interface CustomRequest extends Request {
+  userId: string;
+}
+
+export interface ItemId {
+  id: string;
 }
