@@ -12,9 +12,9 @@
     "build:dev": "tsc -w",
     "start": "node .",
     "start:dev": "nodemon . -q",
-    "test": "jest --passWithNoTests",
+    "test": "jest",
     "test:dev": "jest --watchAll",
-    "test:coverage": "jest --coverage --watchAll=false --passWithNoTests",
+    "test:coverage": "jest --coverage --watchAll=false",
     "prepare": "husky install"
   },
   "keywords": [],
@@ -49,6 +49,7 @@
     "debug": "^4.3.4",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "express-validation": "^4.1.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.7.1",
     "morgan": "^1.10.0"
