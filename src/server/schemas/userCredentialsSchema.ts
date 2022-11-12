@@ -7,3 +7,10 @@ export const userRegisterSchema = {
     email: Joi.string().email().required(),
   }),
 };
+
+export const userLoginSchema = {
+  body: Joi.object({
+    username: Joi.string().required(),
+    password: Joi.string().min(5).required(),
+  }),
+};

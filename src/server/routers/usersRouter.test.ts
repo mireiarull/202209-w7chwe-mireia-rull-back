@@ -1,7 +1,7 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import request from "supertest";
-import type { Credentials } from "../contollers/types";
+import type { Credentials } from "../controllers/types";
 import User from "../../database/models/User";
 import connectDatabase from "../../database";
 import app from "../app";
