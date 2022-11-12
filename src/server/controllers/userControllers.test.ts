@@ -1,11 +1,12 @@
 import type { NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import { loginUser, registerUser } from "./userControllers";
+import { getAllUsers, loginUser, registerUser } from "./userControllers";
 import jwt from "jsonwebtoken";
 import User from "../../database/models/User";
 import CustomError from "../../CustomError/CustomError";
 import mongoose from "mongoose";
 import type { Credentials } from "./types";
+import type { CustomRequest } from "../../types";
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -128,6 +129,37 @@ describe("Given a loginUser controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(expectedStatus);
       expect(res.json).toHaveBeenCalledWith({ token });
+    });
+  });
+});
+
+describe("Given a loadAllUsers controller", () => {
+  describe("When it receives a request with the current user's id", () => {
+    test("Then it should return a list of all the users and a status of 200", async () => {
+      const expectedStatus = 200;
+      const users = [
+        {
+          username: "admin",
+          password: "",
+          email: "admin@admin.com",
+          id: "",
+        },
+        {
+          username: "mireia",
+          password: "",
+          email: "mireia",
+          id: "",
+        },
+      ];
+      const req: Partial<CustomRequest> = {
+        userId: "1234",
+      };
+      User.find = jest.fn().mockResolvedValueOnce(users);
+
+      await getAllUsers(req as CustomRequest, res as Response, () => {});
+
+      expect(res.status).toHaveBeenCalledWith(expectedStatus);
+      expect(res.json).toHaveBeenCalledWith({ users });
     });
   });
 });

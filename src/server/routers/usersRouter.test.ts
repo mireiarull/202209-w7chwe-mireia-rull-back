@@ -30,6 +30,8 @@ describe("Given a POST method with /users/register endpoint", () => {
         username: "mireia",
         password: "123456",
         email: "mireia@gmail.com",
+        name: "mireia",
+        job: "student",
       };
 
       const response = await request(app)

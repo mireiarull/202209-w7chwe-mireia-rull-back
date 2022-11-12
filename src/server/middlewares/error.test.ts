@@ -21,8 +21,8 @@ describe("Given a generalError middleware", () => {
       expect(res.status).toHaveBeenCalledWith(statusCode);
     });
 
-    test("Then it should call its method json with 'We don't have this robot'", () => {
-      const publicMessage = "We don't have this robot";
+    test("Then it should call its method json with 'Something went wrong'", () => {
+      const publicMessage = "Something went wrong";
       const error = new CustomError("", 400, publicMessage);
       const expectedPublicMessage = { error: publicMessage };
 

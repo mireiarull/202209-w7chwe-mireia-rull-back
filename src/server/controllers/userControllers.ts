@@ -5,19 +5,17 @@ import type { Error } from "mongoose";
 import jwt from "jsonwebtoken";
 import CustomError from "../../CustomError/CustomError.js";
 import User from "../../database/models/User.js";
-import type {
-  Credentials,
-  RegisterCredentials,
-  UserTokenPayload,
-} from "./types.js";
+import type { Credentials, RegisterCredentials } from "./types.js";
 import environment from "../../loadEnvironment.js";
+import type { CustomRequest, UserTokenPayload } from "../../types.js";
 
 export const registerUser = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const { username, password, email } = req.body as RegisterCredentials;
+  const { username, password, email, name, job } =
+    req.body as RegisterCredentials;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -26,9 +24,11 @@ export const registerUser = async (
       username,
       email,
       password: hashedPassword,
+      name,
+      job,
     });
 
-    res.status(201).json({ id: newUser._id, username, email });
+    res.status(201).json({ id: newUser._id, username, email, name, job });
   } catch (error: unknown) {
     if ((error as Error).message.includes("duplicate")) {
       const customError = new CustomError(
@@ -93,5 +93,26 @@ export const loginUser = async (
     res.status(200).json({ token });
   } catch (error: unknown) {
     next(error);
+  }
+};
+
+export const getAllUsers = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const { userId } = req;
+  try {
+    const users = await User.find({
+      _id: { $ne: userId },
+    });
+    res.status(200).json({ users });
+  } catch (error: unknown) {
+    const customError = new CustomError(
+      (error as Error).message,
+      500,
+      "Database error"
+    );
+    next(customError);
   }
 };

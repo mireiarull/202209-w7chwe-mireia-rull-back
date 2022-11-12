@@ -5,7 +5,7 @@ import CustomError from "../../CustomError/CustomError.js";
 import chalk from "chalk";
 import { ValidationError } from "express-validation";
 
-const debug = debugCreator("items:server:middlewares:root");
+const debug = debugCreator("social:server:middlewares:root");
 
 export const notFoundError = (
   req: Request,

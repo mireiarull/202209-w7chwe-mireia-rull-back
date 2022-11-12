@@ -5,6 +5,8 @@ export const userRegisterSchema = {
     username: Joi.string().required(),
     password: Joi.string().min(5).required(),
     email: Joi.string().email().required(),
+    name: Joi.string().required(),
+    job: Joi.string().required(),
   }),
 };
 
