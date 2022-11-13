@@ -2,6 +2,7 @@ import express from "express";
 import { validate } from "express-validation";
 import {
   getAllUsers,
+  getUserById,
   loginUser,
   registerUser,
 } from "../controllers/userControllers.js";
@@ -26,5 +27,6 @@ userRouter.post(
 );
 
 userRouter.get("/list", auth, getAllUsers);
+userRouter.get("/profile/:id", auth, getUserById);
 
 export default userRouter;
