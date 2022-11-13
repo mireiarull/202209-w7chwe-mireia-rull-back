@@ -1,4 +1,5 @@
 import "../../loadEnvironment.js";
+import fs from "fs/promises";
 import type { NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import type { Error } from "mongoose";
@@ -8,6 +9,8 @@ import User from "../../database/models/User.js";
 import type { Credentials, RegisterCredentials } from "./types.js";
 import environment from "../../loadEnvironment.js";
 import type { CustomRequest, UserTokenPayload } from "../../types.js";
+import { createClient } from "@supabase/supabase-js";
+import path from "path";
 
 export const registerUser = async (
   req: Request,
@@ -152,6 +155,9 @@ export const getUserById = async (
   }
 };
 
+const supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
+const bucket = supabase.storage.from(environment.supabaseBucketId);
+
 export const updateUser = async (
   req: CustomRequest,
   res: Response,
@@ -159,7 +165,43 @@ export const updateUser = async (
 ) => {
   const { userId } = req;
 
+  // Const timeStamp = Date.now();
+
+  // const newFilePath = path.join(
+  //   "assets",
+  //   "images",
+  //   req.file.originalname.split(".").join(`${timeStamp}.`)
+  // );
+
+  // const fileUrl = `${req.protocol}://${req.hostname}/${newFilePath.replaceAll(
+  //   `\\`,
+  //   "/"
+  // )}`;
+  console.log(req.body);
+
   try {
+    const newItemFileName = req.file.filename + req.file.originalname;
+
+    // Await fs.rename(
+    //   path.join("assets", "images", req.file.filename),
+    //   newFilePath
+    // );
+
+    await fs.rename(
+      path.join("assets", "images", req.file.filename),
+      path.join("assets", "images", newItemFileName)
+    );
+
+    const userFileContent = await fs.readFile(
+      path.join("assets", "images", newItemFileName)
+    );
+
+    await bucket.upload(newItemFileName, userFileContent);
+
+    const {
+      data: { publicUrl },
+    } = bucket.getPublicUrl(newItemFileName);
+
     const myUser = await User.findById(userId);
 
     if (!myUser) {
@@ -167,8 +209,14 @@ export const updateUser = async (
       return;
     }
 
-    await User.findByIdAndUpdate(userId, req.body);
-    res.status(200).json(req.body);
+    const updatedUser = await User.findByIdAndUpdate(userId, {
+      ...req.body,
+      image: newItemFileName,
+      backupImage: publicUrl,
+    });
+
+    console.log(updatedUser);
+    res.status(200).json(updatedUser);
   } catch (error: unknown) {
     const customError = new CustomError(
       (error as Error).message,
