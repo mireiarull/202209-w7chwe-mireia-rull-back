@@ -133,14 +133,20 @@ export const getUserById = async (
   res: Response,
   next: NextFunction
 ) => {
+  // Const { userId } = req;
   try {
     const { id } = req.params;
+    // Const dbRelations = await Relationship.find({ user1: userId, user2: id });
+    // const userRelation =
+    //   dbRelations.length > 0 ? dbRelations[0].relation : undefined;
+
     const user = await User.findById(id);
     if (!user) {
       res.status(404).json({ error: "User not found" });
       return;
     }
 
+    // Res.status(200).json({ user: { ...user, relation: userRelation } });
     res.status(200).json({ user });
   } catch (error: unknown) {
     const customError = new CustomError(
