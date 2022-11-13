@@ -28,7 +28,18 @@ export const registerUser = async (
       job,
     });
 
-    res.status(201).json({ id: newUser._id, username, email, name, job });
+    const tokenPayload: UserTokenPayload = {
+      username,
+      id: newUser._id.toString(),
+    };
+
+    const token = jwt.sign(tokenPayload, environment.jwtSecret, {
+      expiresIn: "2d",
+    });
+
+    res
+      .status(201)
+      .json({ id: newUser._id, username, email, name, job, token });
   } catch (error: unknown) {
     if ((error as Error).message.includes("duplicate")) {
       const customError = new CustomError(
