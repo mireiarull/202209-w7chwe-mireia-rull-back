@@ -31,6 +31,6 @@ userRouter.post(
 userRouter.get("/list", auth, getAllUsers);
 userRouter.get("/profile/:id", auth, getUserById);
 userRouter.put("/update", auth, updateUser);
-userRouter.post("/addRelationship", addRelationship);
+userRouter.post("/add-relationship", addRelationship);
 
 export default userRouter;
