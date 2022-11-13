@@ -116,3 +116,27 @@ export const getAllUsers = async (
     next(customError);
   }
 };
+
+export const getUserById = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+    if (!user) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    res.status(200).json({ user });
+  } catch (error: unknown) {
+    const customError = new CustomError(
+      (error as Error).message,
+      500,
+      "Database error"
+    );
+    next(customError);
+  }
+};
