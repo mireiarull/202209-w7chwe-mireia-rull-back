@@ -1,6 +1,11 @@
 import type { NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import { getAllUsers, loginUser, registerUser } from "./userControllers";
+import {
+  getAllUsers,
+  loginUser,
+  registerUser,
+  updateUser,
+} from "./userControllers";
 import jwt from "jsonwebtoken";
 import User from "../../database/models/User";
 import CustomError from "../../CustomError/CustomError";
@@ -160,6 +165,32 @@ describe("Given a loadAllUsers controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(expectedStatus);
       expect(res.json).toHaveBeenCalledWith({ users });
+    });
+  });
+});
+
+describe("Given an updateUser controller", () => {
+  describe("When it receives a request with the current user's id and the new user's information", () => {
+    test("Then it should return the updated user and a status of 200", async () => {
+      const expectedStatus = 200;
+      const user = [
+        {
+          username: "admin",
+          password: "",
+          email: "admin@admin.com",
+          id: "1234",
+        },
+      ];
+      const req: Partial<CustomRequest> = {
+        userId: "1234",
+      };
+      User.findOne = jest.fn().mockResolvedValueOnce(user);
+      User.findOneAndUpdate = jest.fn().mockResolvedValueOnce(user);
+
+      await updateUser(req as CustomRequest, res as Response, () => {});
+
+      expect(res.status).toHaveBeenCalledWith(expectedStatus);
+      expect(res.json).toHaveBeenCalled();
     });
   });
 });
