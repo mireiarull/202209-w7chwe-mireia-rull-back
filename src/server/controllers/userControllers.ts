@@ -140,3 +140,30 @@ export const getUserById = async (
     next(customError);
   }
 };
+
+export const updateUser = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const { userId } = req;
+
+  try {
+    const myUser = await User.findById(userId);
+
+    if (!myUser) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    await User.findByIdAndUpdate(userId, req.body);
+    res.status(200).json(req.body);
+  } catch (error: unknown) {
+    const customError = new CustomError(
+      (error as Error).message,
+      500,
+      "Database error updating"
+    );
+    next(customError);
+  }
+};
