@@ -29,6 +29,9 @@ describe("Given a register controller", () => {
     username: "mireia",
     password: "1234",
     email: "mireia@gmail.com",
+    job: "student",
+    name: "mireia",
+    token: "",
   };
 
   const req: Partial<Request> = {
@@ -44,6 +47,9 @@ describe("Given a register controller", () => {
       bcrypt.hash = jest.fn().mockResolvedValueOnce(user.password);
       User.create = jest.fn().mockResolvedValueOnce({ ...user, _id: userId });
 
+      const userToken = jwt.sign({}, "secret");
+      jwt.sign = jest.fn().mockReturnValueOnce(userToken);
+
       await registerUser(req as Request, res as Response, next as NextFunction);
 
       expect(res.status).toHaveBeenCalledWith(expectedStatus);
@@ -51,6 +57,9 @@ describe("Given a register controller", () => {
         id: userId,
         username: user.username,
         email: user.email,
+        job: user.job,
+        name: user.name,
+        token: userToken,
       });
     });
   });
