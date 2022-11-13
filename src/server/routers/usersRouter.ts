@@ -12,6 +12,7 @@ import {
   userLoginSchema,
   userRegisterSchema,
 } from "../controllers/schemas/userCredentialsSchema.js";
+import { addRelationship } from "../controllers/relationshipControllers.js";
 
 // eslint-disable-next-line new-cap
 const userRouter = express.Router();
@@ -30,5 +31,6 @@ userRouter.post(
 userRouter.get("/list", auth, getAllUsers);
 userRouter.get("/profile/:id", auth, getUserById);
 userRouter.put("/update", auth, updateUser);
+userRouter.post("/add-relationship", addRelationship);
 
 export default userRouter;
