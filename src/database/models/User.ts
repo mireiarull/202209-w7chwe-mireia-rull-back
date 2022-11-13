@@ -20,6 +20,18 @@ const userSchema = new Schema({
   job: {
     type: String,
   },
+  interest: {
+    type: String,
+  },
+  residence: {
+    type: String,
+  },
+  image: {
+    type: String,
+  },
+  backupImage: {
+    type: String,
+  },
 });
 
 // eslint-disable-next-line @typescript-eslint/naming-convention

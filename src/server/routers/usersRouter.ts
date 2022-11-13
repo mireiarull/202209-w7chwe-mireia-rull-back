@@ -5,12 +5,13 @@ import {
   getUserById,
   loginUser,
   registerUser,
+  updateUser,
 } from "../controllers/userControllers.js";
 import auth from "../middlewares/auth.js";
 import {
   userLoginSchema,
   userRegisterSchema,
-} from "../schemas/userCredentialsSchema.js";
+} from "../controllers/schemas/userCredentialsSchema.js";
 
 // eslint-disable-next-line new-cap
 const userRouter = express.Router();
@@ -28,5 +29,6 @@ userRouter.post(
 
 userRouter.get("/list", auth, getAllUsers);
 userRouter.get("/profile/:id", auth, getUserById);
+userRouter.put("/update", auth, updateUser);
 
 export default userRouter;
