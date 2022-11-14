@@ -4,10 +4,12 @@ import bcrypt from "bcryptjs";
 import type { Error } from "mongoose";
 import jwt from "jsonwebtoken";
 import CustomError from "../../CustomError/CustomError.js";
+import type { UserStructure } from "../../database/models/User.js";
 import User from "../../database/models/User.js";
 import type { Credentials, RegisterCredentials } from "./types.js";
 import environment from "../../loadEnvironment.js";
 import type { CustomRequest, UserTokenPayload } from "../../types.js";
+import Relationship from "../../database/models/Relationship.js";
 
 export const registerUser = async (
   req: Request,
@@ -133,20 +135,32 @@ export const getUserById = async (
   res: Response,
   next: NextFunction
 ) => {
-  // Const { userId } = req;
+  const { userId } = req;
   try {
     const { id } = req.params;
-    // Const dbRelations = await Relationship.find({ user1: userId, user2: id });
-    // const userRelation =
-    //   dbRelations.length > 0 ? dbRelations[0].relation : undefined;
+    const dbRelations = await Relationship.find({ user1: userId, user2: id });
+    const userRelation =
+      dbRelations.length > 0 ? dbRelations[0].relation : null;
 
-    const user = await User.findById(id);
-    if (!user) {
+    const userDb: UserStructure = await User.findById(id);
+    if (!userDb) {
       res.status(404).json({ error: "User not found" });
       return;
     }
 
-    // Res.status(200).json({ user: { ...user, relation: userRelation } });
+    const user = {
+      username: userDb.username,
+      id,
+      email: userDb.email,
+      name: userDb.name,
+      job: userDb.job,
+      interest: userDb.interest,
+      residence: userDb.residence,
+      image: userDb.image,
+      backupImage: userDb.backupImage,
+      relation: userRelation,
+    };
+
     res.status(200).json({ user });
   } catch (error: unknown) {
     const customError = new CustomError(
