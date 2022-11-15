@@ -2,6 +2,8 @@ import express from "express";
 import { validate } from "express-validation";
 import {
   getAllUsers,
+  getEnemies,
+  getFriends,
   getUserById,
   loginUser,
   registerUser,
@@ -38,5 +40,7 @@ userRouter.get("/list", auth, getAllUsers);
 userRouter.get("/profile/:id", auth, getUserById);
 userRouter.put("/update", auth, updateUser);
 userRouter.post("/add-relationship", addRelationship);
+userRouter.get("/friends", auth, getFriends);
+userRouter.get("/enemies", auth, getEnemies);
 
 export default userRouter;
