@@ -138,6 +138,7 @@ export const getUserById = async (
   const { userId } = req;
   try {
     const { id } = req.params;
+
     const dbRelations = await Relationship.find({ user1: userId, user2: id });
     const userRelation =
       dbRelations.length > 0 ? dbRelations[0].relation : null;
