@@ -115,11 +115,20 @@ export const getAllUsers = async (
   next: NextFunction
 ) => {
   const { userId } = req;
+
   try {
-    const users = await User.find({
-      _id: { $ne: userId },
-    });
-    res.status(200).json({ users });
+    const users = await User.find(
+      {
+        _id: { $ne: userId },
+      },
+      { password: 0 }
+    );
+
+    const usersRelations = await Relationship.find({
+      $or: [{ user1: userId }, { user2: userId }],
+    }); // Add oposite
+
+    res.status(200).json({ users, usersRelations });
   } catch (error: unknown) {
     const customError = new CustomError(
       (error as Error).message,
