@@ -126,7 +126,7 @@ export const getAllUsers = async (
 
     const usersRelations = await Relationship.find({
       $or: [{ user1: userId }, { user2: userId }],
-    }); // Add oposite
+    });
 
     res.status(200).json({ users, usersRelations });
   } catch (error: unknown) {

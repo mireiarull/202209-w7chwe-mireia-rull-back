@@ -12,6 +12,7 @@ import CustomError from "../../CustomError/CustomError";
 import mongoose from "mongoose";
 import type { Credentials } from "./types";
 import type { CustomRequest } from "../../types";
+import Relationship from "../../database/models/Relationship";
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -149,7 +150,7 @@ describe("Given a loginUser controller", () => {
 
 describe("Given a loadAllUsers controller", () => {
   describe("When it receives a request with the current user's id", () => {
-    test("Then it should return a list of all the users and a status of 200", async () => {
+    test("Then it should return a list of all the users and a list with all the relationships matching the user, and a status of 200", async () => {
       const expectedStatus = 200;
       const users = [
         {
@@ -162,18 +163,27 @@ describe("Given a loadAllUsers controller", () => {
           username: "mireia",
           password: "",
           email: "mireia",
-          id: "",
+          id: "54321",
+        },
+      ];
+
+      const usersRelations = [
+        {
+          user1: "12345",
+          user2: "54321",
+          relation: "friends",
         },
       ];
       const req: Partial<CustomRequest> = {
-        userId: "1234",
+        userId: "12345",
       };
       User.find = jest.fn().mockResolvedValueOnce(users);
+      Relationship.find = jest.fn().mockResolvedValueOnce(usersRelations);
 
       await getAllUsers(req as CustomRequest, res as Response, () => {});
 
       expect(res.status).toHaveBeenCalledWith(expectedStatus);
-      expect(res.json).toHaveBeenCalledWith({ users });
+      expect(res.json).toHaveBeenCalledWith({ users, usersRelations });
     });
   });
 });
