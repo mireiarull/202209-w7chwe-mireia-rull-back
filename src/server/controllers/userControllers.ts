@@ -208,3 +208,45 @@ export const updateUser = async (
     next(customError);
   }
 };
+
+export const getFriends = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const { userId } = req;
+
+  try {
+    const users = await User.find(
+      {
+        _id: { $ne: userId },
+      },
+      { password: 0 }
+    );
+
+    // Const usersRelations = await Relationship.find({
+    //   $or: [{ user1: userId }, { user2: userId }],
+    // });
+
+    const usersRelations = await Relationship.find({
+      $or: [
+        {
+          $and: [
+            { relation: "friends" },
+            { $or: [{ user1: userId }, { user2: userId }] },
+          ],
+        },
+      ],
+    });
+    console.log(usersRelations);
+
+    res.status(200).json({ users, usersRelations });
+  } catch (error: unknown) {
+    const customError = new CustomError(
+      (error as Error).message,
+      500,
+      "Database error"
+    );
+    next(customError);
+  }
+};
