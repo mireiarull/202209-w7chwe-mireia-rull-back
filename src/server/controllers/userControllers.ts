@@ -115,11 +115,20 @@ export const getAllUsers = async (
   next: NextFunction
 ) => {
   const { userId } = req;
+
   try {
-    const users = await User.find({
-      _id: { $ne: userId },
+    const users = await User.find(
+      {
+        _id: { $ne: userId },
+      },
+      { password: 0 }
+    );
+
+    const usersRelations = await Relationship.find({
+      $or: [{ user1: userId }, { user2: userId }],
     });
-    res.status(200).json({ users });
+
+    res.status(200).json({ users, usersRelations });
   } catch (error: unknown) {
     const customError = new CustomError(
       (error as Error).message,
@@ -138,6 +147,7 @@ export const getUserById = async (
   const { userId } = req;
   try {
     const { id } = req.params;
+
     const dbRelations = await Relationship.find({ user1: userId, user2: id });
     const userRelation =
       dbRelations.length > 0 ? dbRelations[0].relation : null;

@@ -1,3 +1,4 @@
+import type { InferSchemaType } from "mongoose";
 import { Schema, model } from "mongoose";
 
 const relationshipSchema = new Schema({
@@ -15,6 +16,7 @@ const relationshipSchema = new Schema({
   },
 });
 
+export type RelationshipStructure = InferSchemaType<typeof relationshipSchema>;
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const Relationship = model("Relationship", relationshipSchema, "relations");
 

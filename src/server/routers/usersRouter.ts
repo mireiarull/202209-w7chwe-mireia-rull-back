@@ -14,8 +14,14 @@ import {
 } from "../controllers/schemas/userCredentialsSchema.js";
 import { addRelationship } from "../controllers/relationshipControllers.js";
 
+// Const upload = multer({
+//   dest: uploadsPath,
+//   })
+
 // eslint-disable-next-line new-cap
 const userRouter = express.Router();
+
+// UserRouter.post(partialPaths.users.register, upload.single("avatar").validate(.....), create)
 
 userRouter.post(
   "/register",

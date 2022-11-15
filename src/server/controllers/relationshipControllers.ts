@@ -11,6 +11,9 @@ export const addRelationship = async (
   const { user1, user2, relation } = req.body as RegisterRelationship;
 
   try {
+    await Relationship.findOneAndDelete({ user1, user2 });
+    await Relationship.findOneAndDelete({ user2, user1 });
+
     await Relationship.create({
       user1,
       user2,
