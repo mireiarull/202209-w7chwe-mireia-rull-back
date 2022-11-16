@@ -187,29 +187,3 @@ describe("Given a loadAllUsers controller", () => {
     });
   });
 });
-
-describe("Given an updateUser controller", () => {
-  describe("When it receives a request with the current user's id and the new user's information", () => {
-    test("Then it should return the updated user and a status of 200", async () => {
-      const expectedStatus = 200;
-      const user = [
-        {
-          username: "admin",
-          password: "",
-          email: "admin@admin.com",
-          id: "1234",
-        },
-      ];
-      const req: Partial<CustomRequest> = {
-        userId: "1234",
-      };
-      User.findOne = jest.fn().mockResolvedValueOnce(user);
-      User.findOneAndUpdate = jest.fn().mockResolvedValueOnce(user);
-
-      await updateUser(req as CustomRequest, res as Response, () => {});
-
-      expect(res.status).toHaveBeenCalledWith(expectedStatus);
-      expect(res.json).toHaveBeenCalled();
-    });
-  });
-});
