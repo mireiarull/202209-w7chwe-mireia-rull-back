@@ -1,5 +1,7 @@
 import "../../loadEnvironment.js";
+import { createClient } from "@supabase/supabase-js";
 import type { NextFunction, Request, Response } from "express";
+import fs from "fs/promises";
 import bcrypt from "bcryptjs";
 import type { Error } from "mongoose";
 import jwt from "jsonwebtoken";
@@ -10,6 +12,7 @@ import type { Credentials, RegisterCredentials } from "./types.js";
 import environment from "../../loadEnvironment.js";
 import type { CustomRequest, UserTokenPayload } from "../../types.js";
 import Relationship from "../../database/models/Relationship.js";
+import path from "path";
 
 export const registerUser = async (
   req: Request,
@@ -189,6 +192,13 @@ export const updateUser = async (
 ) => {
   const { userId } = req;
 
+  const supaBase = createClient(
+    environment.supabaseUrl,
+    environment.supabaseKey
+  );
+
+  const bucket = supaBase.storage.from(environment.supabaseBucketId);
+
   try {
     const myUser = await User.findById(userId);
 
@@ -197,7 +207,27 @@ export const updateUser = async (
       return;
     }
 
-    await User.findByIdAndUpdate(userId, req.body);
+    if (req.file) {
+      await fs.rename(
+        path.join("assets", "images", req.file.filename),
+        path.join("assets", "images", req.file.filename + req.file.originalname)
+      );
+    }
+
+    const filecontent = await fs.readFile(
+      path.join("assets", "images", req.file.filename + req.file.originalname)
+    );
+
+    await bucket.upload(req.file.filename + req.file.originalname, filecontent);
+    const {
+      data: { publicUrl },
+    } = bucket.getPublicUrl(req.file.filename + req.file.originalname);
+
+    await User.findByIdAndUpdate(userId, {
+      ...req.body,
+      backupImage: publicUrl,
+      image: req.file.filename + req.file.originalname,
+    });
     res.status(200).json(req.body);
   } catch (error: unknown) {
     const customError = new CustomError(
