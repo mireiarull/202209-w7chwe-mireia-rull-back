@@ -14,10 +14,6 @@ import type { CustomRequest, UserTokenPayload } from "../../types.js";
 import Relationship from "../../database/models/Relationship.js";
 import path from "path";
 
-const supaBase = createClient(environment.supabaseUrl, environment.supabaseKey);
-
-const bucket = supaBase.storage.from(environment.supabaseBucketId);
-
 export const registerUser = async (
   req: Request,
   res: Response,
@@ -195,6 +191,13 @@ export const updateUser = async (
   next: NextFunction
 ) => {
   const { userId } = req;
+
+  const supaBase = createClient(
+    environment.supabaseUrl,
+    environment.supabaseKey
+  );
+
+  const bucket = supaBase.storage.from(environment.supabaseBucketId);
 
   try {
     const myUser = await User.findById(userId);
