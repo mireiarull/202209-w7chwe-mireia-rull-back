@@ -59,11 +59,6 @@ describe("Given a notFoundError middleware", () => {
   describe("When it receives a next function'", () => {
     test("Then it should call the recevived next function with a 404 'Endpoint not found'", () => {
       const next = jest.fn();
-      // Const expectedError = new CustomError(
-      //   "Endpoint not found",
-      //   404,
-      //   "Endpoint not found"
-      // );
 
       notFoundError(null, res as Response, next);
 

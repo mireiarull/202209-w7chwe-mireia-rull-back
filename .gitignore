@@ -6,3 +6,6 @@ coverage/
 
 /.vscode
 .vscode/
+
+/assets
+assets/
