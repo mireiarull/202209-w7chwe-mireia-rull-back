@@ -5,12 +5,15 @@ import bcrypt from "bcryptjs";
 import type { Error } from "mongoose";
 import jwt from "jsonwebtoken";
 import CustomError from "../../CustomError/CustomError.js";
+import type { UserStructure } from "../../database/models/User.js";
 import User from "../../database/models/User.js";
 import type { Credentials, RegisterCredentials } from "./types.js";
 import environment from "../../loadEnvironment.js";
 import type { CustomRequest, UserTokenPayload } from "../../types.js";
 import { createClient } from "@supabase/supabase-js";
 import path from "path";
+import Relationship from "../../database/models/Relationship.js";
+
 
 export const registerUser = async (
   req: Request,
@@ -116,11 +119,20 @@ export const getAllUsers = async (
   next: NextFunction
 ) => {
   const { userId } = req;
+
   try {
-    const users = await User.find({
-      _id: { $ne: userId },
+    const users = await User.find(
+      {
+        _id: { $ne: userId },
+      },
+      { password: 0 }
+    );
+
+    const usersRelations = await Relationship.find({
+      $or: [{ user1: userId }, { user2: userId }],
     });
-    res.status(200).json({ users });
+
+    res.status(200).json({ users, usersRelations });
   } catch (error: unknown) {
     const customError = new CustomError(
       (error as Error).message,
@@ -136,13 +148,32 @@ export const getUserById = async (
   res: Response,
   next: NextFunction
 ) => {
+  const { userId } = req;
   try {
     const { id } = req.params;
-    const user = await User.findById(id);
-    if (!user) {
+
+    const dbRelations = await Relationship.find({ user1: userId, user2: id });
+    const userRelation =
+      dbRelations.length > 0 ? dbRelations[0].relation : null;
+
+    const userDb: UserStructure = await User.findById(id);
+    if (!userDb) {
       res.status(404).json({ error: "User not found" });
       return;
     }
+
+    const user = {
+      username: userDb.username,
+      id,
+      email: userDb.email,
+      name: userDb.name,
+      job: userDb.job,
+      interest: userDb.interest,
+      residence: userDb.residence,
+      image: userDb.image,
+      backupImage: userDb.backupImage,
+      relation: userRelation,
+    };
 
     res.status(200).json({ user });
   } catch (error: unknown) {
@@ -222,6 +253,82 @@ export const updateUser = async (
       (error as Error).message,
       500,
       "Database error updating"
+    );
+    next(customError);
+  }
+};
+
+export const getFriends = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const { userId } = req;
+
+  try {
+    const users = await User.find(
+      {
+        _id: { $ne: userId },
+      },
+      { password: 0 }
+    );
+
+    const usersRelations = await Relationship.find({
+      $or: [
+        {
+          $and: [
+            { relation: "friends" },
+            { $or: [{ user1: userId }, { user2: userId }] },
+          ],
+        },
+      ],
+    });
+    console.log(usersRelations);
+
+    res.status(200).json({ users, usersRelations });
+  } catch (error: unknown) {
+    const customError = new CustomError(
+      (error as Error).message,
+      500,
+      "Database error"
+    );
+    next(customError);
+  }
+};
+
+export const getEnemies = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const { userId } = req;
+
+  try {
+    const users = await User.find(
+      {
+        _id: { $ne: userId },
+      },
+      { password: 0 }
+    );
+
+    const usersRelations = await Relationship.find({
+      $or: [
+        {
+          $and: [
+            { relation: "enemies" },
+            { $or: [{ user1: userId }, { user2: userId }] },
+          ],
+        },
+      ],
+    });
+    console.log(usersRelations);
+
+    res.status(200).json({ users, usersRelations });
+  } catch (error: unknown) {
+    const customError = new CustomError(
+      (error as Error).message,
+      500,
+      "Database error"
     );
     next(customError);
   }

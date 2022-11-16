@@ -14,6 +14,7 @@ app.use(morgan("dev"));
 
 app.use(express.json());
 
+// App.use(partialPaths.users.base, )
 app.use("/users", userRouter);
 
 app.use(notFoundError);

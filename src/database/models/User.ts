@@ -1,3 +1,4 @@
+import type { InferSchemaType } from "mongoose";
 import { Schema, model } from "mongoose";
 
 const userSchema = new Schema({
@@ -33,6 +34,8 @@ const userSchema = new Schema({
     type: String,
   },
 });
+
+export type UserStructure = InferSchemaType<typeof userSchema>;
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const User = model("User", userSchema, "users");

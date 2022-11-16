@@ -2,6 +2,8 @@ import express from "express";
 import { validate } from "express-validation";
 import {
   getAllUsers,
+  getEnemies,
+  getFriends,
   getUserById,
   loginUser,
   registerUser,
@@ -12,6 +14,11 @@ import {
   userLoginSchema,
   userRegisterSchema,
 } from "../controllers/schemas/userCredentialsSchema.js";
+import { addRelationship } from "../controllers/relationshipControllers.js";
+
+// Const upload = multer({
+//   dest: uploadsPath,
+//   })
 
 import multer from "multer";
 import path from "path";
@@ -22,6 +29,8 @@ const upload = multer({
 
 // eslint-disable-next-line new-cap
 const userRouter = express.Router();
+
+// UserRouter.post(partialPaths.users.register, upload.single("avatar").validate(.....), create)
 
 userRouter.post(
   "/register",
@@ -37,5 +46,8 @@ userRouter.post(
 userRouter.get("/list", auth, getAllUsers);
 userRouter.get("/profile/:id", auth, getUserById);
 userRouter.put("/update", auth, upload.single("image"),  updateUser);
+userRouter.post("/add-relationship", addRelationship);
+userRouter.get("/friends", auth, getFriends);
+userRouter.get("/enemies", auth, getEnemies);
 
 export default userRouter;

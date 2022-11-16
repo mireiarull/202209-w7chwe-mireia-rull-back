@@ -8,3 +8,9 @@ export interface RegisterCredentials extends Credentials {
   name: string;
   job: string;
 }
+
+export interface RegisterRelationship {
+  user1: string;
+  user2: string;
+  relation: "friends" | "enemies";
+}
