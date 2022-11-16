@@ -1,11 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import {
-  getAllUsers,
-  loginUser,
-  registerUser,
-  updateUser,
-} from "./userControllers";
+import { getAllUsers, loginUser, registerUser } from "./userControllers";
 import jwt from "jsonwebtoken";
 import User from "../../database/models/User";
 import CustomError from "../../CustomError/CustomError";
