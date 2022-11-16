@@ -212,22 +212,28 @@ export const updateUser = async (
         path.join("assets", "images", req.file.filename),
         path.join("assets", "images", req.file.filename + req.file.originalname)
       );
+
+      const filecontent = await fs.readFile(
+        path.join("assets", "images", req.file.filename + req.file.originalname)
+      );
+
+      await bucket.upload(
+        req.file.filename + req.file.originalname,
+        filecontent
+      );
+      const {
+        data: { publicUrl },
+      } = bucket.getPublicUrl(req.file.filename + req.file.originalname);
+
+      await User.findByIdAndUpdate(userId, {
+        ...req.body,
+        backupImage: publicUrl,
+        image: req.file.filename + req.file.originalname,
+      });
+    } else {
+      await User.findByIdAndUpdate(userId, req.body);
     }
 
-    const filecontent = await fs.readFile(
-      path.join("assets", "images", req.file.filename + req.file.originalname)
-    );
-
-    await bucket.upload(req.file.filename + req.file.originalname, filecontent);
-    const {
-      data: { publicUrl },
-    } = bucket.getPublicUrl(req.file.filename + req.file.originalname);
-
-    await User.findByIdAndUpdate(userId, {
-      ...req.body,
-      backupImage: publicUrl,
-      image: req.file.filename + req.file.originalname,
-    });
     res.status(200).json(req.body);
   } catch (error: unknown) {
     const customError = new CustomError(
@@ -264,7 +270,6 @@ export const getFriends = async (
         },
       ],
     });
-    console.log(usersRelations);
 
     res.status(200).json({ users, usersRelations });
   } catch (error: unknown) {
@@ -302,7 +307,6 @@ export const getEnemies = async (
         },
       ],
     });
-    console.log(usersRelations);
 
     res.status(200).json({ users, usersRelations });
   } catch (error: unknown) {
